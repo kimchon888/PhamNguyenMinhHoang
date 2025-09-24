@@ -1,15 +1,16 @@
-name: Frontend CI/CD
+name: Node.js CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout source code
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
@@ -21,26 +22,19 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/my-frontend:latest
-            ${{ secrets.DOCKER_USERNAME }}/my-frontend:${{ github.sha }}
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/my-node-app:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/my-node-app:latest
 
-      - name: Deploy to VPS
+      - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            mkdir -p ~/frontend
-            cd ~/frontend
-            echo "${{ secrets.DOCKER_COMPOSE_FILE_BASE64 }}" | base64 -d > docker-compose.yml
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker-compose pull
-            docker-compose up -d --remove-orphans
-            docker image prune -f
+            docker pull ${{ secrets.DOCKER_USERNAME }}/my-node-app:latest
+            docker stop my-node-app || true
+            docker rm my-node-app || true
+            docker run -d -p 3000:3000 --name my-node-app ${{ secrets.DOCKER_USERNAME }}/my-node-app:latest
