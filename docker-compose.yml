@@ -8,3 +8,10 @@ services:
     ports:
       - "3000:3000"
     restart: always
+
+  localsh:
+    image: my-node-app:latest
+    container_name: node-localsh
+    entrypoint: sh
+    stdin_open: true
+    tty: true
