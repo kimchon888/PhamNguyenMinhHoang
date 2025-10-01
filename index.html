@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Node.js Demo UI</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f0f2f5;
+      color: #333;
+      text-align: center;
+    }
+
+    header {
+      background: #007bff;
+      color: white;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    main {
+      padding: 40px;
+    }
+
+    button {
+      padding: 12px 25px;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #28a745;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #218838;
+      transform: scale(1.05);
+    }
+
+    .time-box {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    🌐 Node.js Demo UI
+  </header>
+
+  <main>
+    <h1>Xin chào 👋</h1>
+    <p>Đây là giao diện web đơn giản kết hợp HTML + CSS + JavaScript.</p>
+    
+    <button onclick="changeBackground()">Đổi màu nền</button>
+    <button onclick="alert('Bạn vừa bấm nút!')">Thông báo</button>
+
+    <div class="time-box" id="clock"></div>
+  </main>
+
+  <script>
+    // Đổi màu nền ngẫu nhiên
+    function changeBackground() {
+      const colors = ["#f4f4f9", "#ffe4e1", "#d1f7c4", "#cce7ff", "#f9f7d9"];
+      document.body.style.background = colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    // Đồng hồ thời gian thực
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("clock").innerText = 
+        "⏰ " + now.toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>
